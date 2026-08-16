@@ -3,396 +3,453 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>A Mystery Awaits...</title>
+<title>Protocol: Bestie</title>
 <style>
-  /* Base Styles */
   body {
     margin: 0; padding: 0;
-    background-color: #0f0c29;
-    background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
-    color: #e0e0e0;
+    background-color: #0b0c10;
+    color: #c5c6c7;
     font-family: 'Courier New', Courier, monospace;
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
-    min-height: 100vh; overflow: hidden;
+    min-height: 100vh; overflow-x: hidden;
     text-align: center;
     user-select: none;
   }
   
   .stage {
     display: none;
-    padding: 20px;
-    max-width: 600px;
+    padding: 30px;
+    max-width: 650px;
     width: 90%;
-    animation: fadeIn 0.8s ease-in-out;
+    animation: fadeIn 0.5s ease-out;
+    background: #1f2833;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    border: 1px solid #45a29e;
+    position: relative;
+  }
+
+  .progress {
+    position: absolute;
+    top: 10px; right: 15px;
+    color: #45a29e; font-size: 0.8rem; letter-spacing: 2px;
   }
   
-  h1 { color: #ff007f; text-shadow: 0 0 10px #ff007f; margin-bottom: 15px; }
-  p { font-size: 1.1rem; line-height: 1.5; margin-bottom: 20px; }
-  .hint { font-size: 0.9rem; color: #a9a9a9; font-style: italic; }
+  h1 { color: #66fcf1; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; font-size: 1.6rem; }
+  h2 { color: #45a29e; letter-spacing: 5px; font-size: 1.4rem; word-wrap: break-word;}
+  p { font-size: 1.05rem; line-height: 1.6; margin-bottom: 25px; color: #e0e0e0; }
+  .hint { font-size: 0.85rem; color: #a9a9a9; font-style: italic; margin-top: -15px; margin-bottom: 20px;}
 
-  /* Interactive Elements */
   .btn {
     background-color: transparent;
-    border: 2px solid #00f0ff; color: #00f0ff;
-    padding: 12px 25px; font-size: 1.1rem;
+    border: 2px solid #66fcf1; color: #66fcf1;
+    padding: 10px 25px; font-size: 1rem;
     font-family: inherit; font-weight: bold;
-    cursor: pointer; border-radius: 8px;
-    transition: all 0.3s ease;
+    cursor: pointer; border-radius: 4px;
+    transition: all 0.2s ease;
     margin: 10px;
     text-transform: uppercase;
+    letter-spacing: 1px;
   }
   .btn:hover, .btn:active {
-    background-color: #00f0ff; color: #0f0c29;
-    box-shadow: 0 0 15px #00f0ff;
+    background-color: #66fcf1; color: #0b0c10;
+    box-shadow: 0 0 15px rgba(102, 252, 241, 0.5);
   }
 
-  input[type="text"] {
-    padding: 10px; font-size: 1.1rem;
-    border: 2px solid #00f0ff; border-radius: 5px;
-    background: transparent; color: #fff;
-    text-align: center; margin-bottom: 15px;
-    width: 80%; max-width: 250px;
+  input[type="text"], input[type="number"], input[type="password"] {
+    padding: 12px; font-size: 1.1rem;
+    border: 2px solid #45a29e; border-radius: 4px;
+    background: #0b0c10; color: #66fcf1;
+    text-align: center; margin-bottom: 20px;
+    width: 85%; max-width: 300px;
     outline: none; font-family: inherit;
     text-transform: uppercase;
+    letter-spacing: 2px;
   }
-
-  /* Specific Stage Styles */
-  #runBtn { position: relative; transition: transform 0.2s; }
   
-  .grid {
-    display: flex; flex-wrap: wrap; justify-content: center;
-    gap: 10px; font-size: 2rem; max-width: 300px; margin: 0 auto;
-  }
-  .grid span { cursor: pointer; padding: 5px; transition: transform 0.2s; }
-  .grid span:hover { transform: scale(1.3); }
-
-  .color-btn {
-    width: 60px; height: 60px; border-radius: 50%;
-    border: none; cursor: pointer; margin: 10px;
-    box-shadow: 0 0 10px rgba(255,255,255,0.2);
-    transition: transform 0.1s;
-  }
-  .color-btn:active { transform: scale(0.9); }
+  input:focus { border-color: #66fcf1; box-shadow: 0 0 10px rgba(102, 252, 241, 0.2); }
 
   .tiny-link {
-    font-size: 0.6rem; color: #555;
-    cursor: pointer; margin-top: 50px;
+    font-size: 0.7rem; color: #6c757d;
+    cursor: pointer; margin-top: 30px;
     display: inline-block;
+    transition: color 0.3s;
   }
+  .tiny-link:hover { color: #c5c6c7; }
 
-  /* Confetti */
   .confetti {
-    position: absolute; width: 10px; height: 10px;
+    position: absolute; width: 8px; height: 15px;
     border-radius: 2px; animation: fall linear infinite; z-index: 100;
   }
 
-  @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes fall {
     0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
     100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
   }
   
-  .shake { animation: shake 0.4s; }
+  .shake { animation: shake 0.4s; border-color: #ff4c4c !important; }
   @keyframes shake {
     0%, 100% { transform: translateX(0); }
-    25%, 75% { transform: translateX(-10px); }
-    50% { transform: translateX(10px); }
+    25%, 75% { transform: translateX(-8px); }
+    50% { transform: translateX(8px); }
   }
 </style>
 </head>
-<body onclick="resetPatience()">
+<body>
 
+  <!-- Stage 1: Intro -->
   <div id="stage-1" class="stage" style="display: block;">
-    <h1>Protocol Initiated</h1>
-    <p>Every time you load this page, the universe generates a completely new set of puzzles. Over 8 billion combinations exist.</p>
-    <p>Are you ready for your unique trial?</p>
-    <button class="btn" id="runBtn" onmouseover="moveButton()" ontouchstart="moveButton()" onclick="nextStage(2)">Start</button>
+    <h1>Cognitive Gauntlet</h1>
+    <p>This is a 15-stage procedural logic exam. Variables regenerate uniquely upon every initialization.</p>
+    <p>Focus your mind. Read carefully. No hints will be provided.</p>
+    <button class="btn" onclick="nextStage(2)">Initiate</button>
   </div>
 
+  <!-- Trial 1: Riddle -->
   <div id="stage-2" class="stage">
+    <div class="progress">[ 01 / 15 ]</div>
     <h1>Trial I: The Mind</h1>
-    <p id="riddle-text"></p>
-    <!-- Added onkeydown for Enter key support -->
-    <input type="text" id="riddleAns" placeholder="Your answer..." onkeydown="if(event.key === 'Enter') checkRiddle()">
-    <br>
-    <button class="btn" onclick="checkRiddle()">Submit</button>
+    <p id="t1-text"></p>
+    <input type="text" id="t1Ans" placeholder="ANSWER..." onkeydown="if(event.key==='Enter') check(1)">
+    <br><button class="btn" onclick="check(1)">Submit</button>
   </div>
 
+  <!-- Trial 2: Math Pattern -->
   <div id="stage-3" class="stage">
-    <h1>Trial II: The Eye</h1>
-    <p>Things are not always as they seem. Find the impostor.</p>
-    <div class="grid" id="impostor-grid"></div>
+    <div class="progress">[ 02 / 15 ]</div>
+    <h1>Trial II: The Pattern</h1>
+    <p>Analyze the mathematical sequence and provide the missing 5th number.</p>
+    <h2 id="t2-text"></h2>
+    <input type="number" id="t2Ans" placeholder="NEXT NUMBER..." onkeydown="if(event.key==='Enter') check(2)">
+    <br><button class="btn" onclick="check(2)">Submit</button>
   </div>
 
+  <!-- Trial 3: QWERTY Cipher -->
   <div id="stage-4" class="stage">
-    <h1>Trial III: The Code</h1>
-    <p>Decrypt the following transmission:</p>
-    <h2 id="cipher-text" style="letter-spacing: 5px; color: #00f0ff;"></h2>
-    <p class="hint" id="cipher-hint"></p>
-    <!-- Added onkeydown for Enter key support -->
-    <input type="text" id="cipherAns" placeholder="Decoded word..." onkeydown="if(event.key === 'Enter') checkCipher()">
-    <br>
-    <button class="btn" onclick="checkCipher()">Verify</button>
+    <div class="progress">[ 03 / 15 ]</div>
+    <h1>Trial III: The Shift</h1>
+    <p>This word was typed by someone whose hands were shifted exactly <b>one key to the right</b> on a QWERTY keyboard.</p>
+    <h2 id="t3-text"></h2>
+    <input type="text" id="t3Ans" placeholder="DECODED WORD..." onkeydown="if(event.key==='Enter') check(3)">
+    <br><button class="btn" onclick="check(3)">Submit</button>
   </div>
 
+  <!-- Trial 4: Logic -->
   <div id="stage-5" class="stage">
-    <h1>Trial IV: The Order</h1>
-    <p>Logic is key. Press the colors in <b>alphabetical order</b>.</p>
-    <div id="color-btn-container"></div>
-    <p id="color-feedback" style="font-size: 0.9rem; color: #ff007f; min-height: 20px;"></p>
+    <div class="progress">[ 04 / 15 ]</div>
+    <h1>Trial IV: Deduction</h1>
+    <p id="t4-text"></p>
+    <input type="text" id="t4Ans" placeholder="NAME..." onkeydown="if(event.key==='Enter') check(4)">
+    <br><button class="btn" onclick="check(4)">Submit</button>
   </div>
 
+  <!-- Trial 5: Anagram -->
   <div id="stage-6" class="stage">
-    <h1>Trial V: Patience</h1>
-    <p>Do absolutely nothing. Do not touch the screen. Just wait.</p>
-    <div style="width: 100%; height: 20px; background: #333; border-radius: 10px; margin-top: 30px;">
-      <div id="progress-bar" style="width: 0%; height: 100%; background: #00f0ff; border-radius: 10px; transition: width 0.1s linear;"></div>
-    </div>
-    <p id="patience-warning" style="color: #ff007f; margin-top: 15px; opacity: 0;">Timer reset! I said do nothing!</p>
+    <div class="progress">[ 05 / 15 ]</div>
+    <h1>Trial V: Chaos</h1>
+    <p>Unscramble the letters to reveal the original word.</p>
+    <h2 id="t5-text"></h2>
+    <input type="text" id="t5Ans" placeholder="WORD..." onkeydown="if(event.key==='Enter') check(5)">
+    <br><button class="btn" onclick="check(5)">Submit</button>
   </div>
 
+  <!-- Trial 6: Binary -->
   <div id="stage-7" class="stage">
-    <h1>Trial VI: The Choice</h1>
-    <p>You have reached the end. Click the button below to generate a brand new, never-before-seen puzzle sequence.</p>
-    <button class="btn" style="border-color: #ff007f; color: #ff007f;" onclick="location.reload()">RESTART EVERYTHING</button>
-    <br><br>
-    <span class="tiny-link" onclick="nextStage(8)">or click here to finish</span>
+    <div class="progress">[ 06 / 15 ]</div>
+    <h1>Trial VI: The Machine</h1>
+    <p>Convert this binary sequence into its standard decimal number.</p>
+    <h2 id="t6-text"></h2>
+    <input type="number" id="t6Ans" placeholder="DECIMAL..." onkeydown="if(event.key==='Enter') check(6)">
+    <br><button class="btn" onclick="check(6)">Submit</button>
   </div>
 
+  <!-- Trial 7: Word Association -->
   <div id="stage-8" class="stage">
-    <h1 style="font-size: 3rem; color: #00f0ff;">Surprise Bestie! ✨</h1>
-    <p style="font-size: 1.3rem;">You survived a literally one-in-a-billion puzzle combination! 🧠💨</p>
-    <p>Just wanted to make something unique to remind you that you're the absolute best. Thanks for always dealing with my crazy ideas and being an amazing friend.</p>
+    <div class="progress">[ 07 / 15 ]</div>
+    <h1>Trial VII: The Link</h1>
+    <p>What single word connects these three items?</p>
+    <h2 id="t7-text"></h2>
+    <input type="text" id="t7Ans" placeholder="WORD..." onkeydown="if(event.key==='Enter') check(7)">
+    <br><button class="btn" onclick="check(7)">Submit</button>
+  </div>
+
+  <!-- Trial 8: Navigation -->
+  <div id="stage-9" class="stage">
+    <div class="progress">[ 08 / 15 ]</div>
+    <h1>Trial VIII: Coordinates</h1>
+    <p>Start at Coordinates (0, 0). <br><span id="t8-text" style="color: #66fcf1;"></span></p>
+    <p class="hint">Format your answer exactly as: X,Y (e.g., 5,-2)</p>
+    <input type="text" id="t8Ans" placeholder="X,Y" onkeydown="if(event.key==='Enter') check(8)">
+    <br><button class="btn" onclick="check(8)">Submit</button>
+  </div>
+
+  <!-- Trial 9: Mirror -->
+  <div id="stage-10" class="stage">
+    <div class="progress">[ 09 / 15 ]</div>
+    <h1>Trial IX: The Mirror</h1>
+    <p>Type the following string exactly in reverse.</p>
+    <h2 id="t9-text"></h2>
+    <input type="text" id="t9Ans" placeholder="REVERSED..." onkeydown="if(event.key==='Enter') check(9)">
+    <br><button class="btn" onclick="check(9)">Submit</button>
+  </div>
+
+  <!-- Trial 10: Time Math -->
+  <div id="stage-11" class="stage">
+    <div class="progress">[ 10 / 15 ]</div>
+    <h1>Trial X: Chronos</h1>
+    <p id="t10-text"></p>
+    <p class="hint">Format as HH:MM in 24-hour time (e.g., 14:05)</p>
+    <input type="text" id="t10Ans" placeholder="HH:MM" onkeydown="if(event.key==='Enter') check(10)">
+    <br><button class="btn" onclick="check(10)">Submit</button>
+  </div>
+
+  <!-- Trial 11: Caesar Cipher -->
+  <div id="stage-12" class="stage">
+    <div class="progress">[ 11 / 15 ]</div>
+    <h1>Trial XI: Cryptography</h1>
+    <p>This word has been encrypted using a +3 Caesar Cipher (every letter shifted 3 spaces forward in the alphabet). Decrypt it.</p>
+    <h2 id="t11-text"></h2>
+    <input type="text" id="t11Ans" placeholder="DECRYPTED..." onkeydown="if(event.key==='Enter') check(11)">
+    <br><button class="btn" onclick="check(11)">Submit</button>
+  </div>
+
+  <!-- Trial 12: Observation -->
+  <div id="stage-13" class="stage">
+    <div class="progress">[ 12 / 15 ]</div>
+    <h1>Trial XII: The Eye</h1>
+    <p id="t12-q"></p>
+    <h2 id="t12-text" style="font-size:1.1rem; letter-spacing:2px; word-wrap: break-word;"></h2>
+    <input type="number" id="t12Ans" placeholder="COUNT..." onkeydown="if(event.key==='Enter') check(12)">
+    <br><button class="btn" onclick="check(12)">Submit</button>
+  </div>
+
+  <!-- Trial 13: Time Logic -->
+  <div id="stage-14" class="stage">
+    <div class="progress">[ 13 / 15 ]</div>
+    <h1>Trial XIII: Paradox</h1>
+    <p id="t13-text"></p>
+    <input type="text" id="t13Ans" placeholder="DAY..." onkeydown="if(event.key==='Enter') check(13)">
+    <br><button class="btn" onclick="check(13)">Submit</button>
+  </div>
+
+  <!-- Trial 14: The Void -->
+  <div id="stage-15" class="stage">
+    <div class="progress">[ 14 / 15 ]</div>
+    <h1>Trial XIV: The Void</h1>
+    <p>Type the word below. The input field will obscure your text. You cannot afford a typo.</p>
+    <h2 id="t14-text"></h2>
+    <input type="password" id="t14Ans" placeholder="••••••••" onkeydown="if(event.key==='Enter') check(14)">
+    <br><button class="btn" onclick="check(14)">Submit</button>
+  </div>
+
+  <!-- Trial 15: Memory -->
+  <div id="stage-16" class="stage">
+    <div class="progress">[ 15 / 15 ]</div>
+    <h1>Trial XV: Recall</h1>
+    <p>Let us test your short-term memory capacity.</p>
+    <p>What was the exact word you submitted as the answer to <b>Trial I (The Mind)</b>?</p>
+    <input type="text" id="t15Ans" placeholder="RECALL..." onkeydown="if(event.key==='Enter') check(15)">
+    <br><button class="btn" onclick="check(15)">Submit</button>
+  </div>
+
+  <!-- Completion Choice -->
+  <div id="stage-17" class="stage">
+    <h1>Protocol Complete</h1>
+    <p>You have survived all 15 stages. Choose your next action.</p>
+    <button class="btn" style="border-color: #6c757d; color: #6c757d;" onclick="location.reload()">REGENERATE EXAM</button>
+    <br><br><span class="tiny-link" onclick="nextStage(18)">PROCEED TO FINAL REPORT</span>
+  </div>
+
+  <!-- Reveal -->
+  <div id="stage-18" class="stage" style="background: transparent; border: none; box-shadow: none;">
+    <h1 style="font-size: 3rem; color: #66fcf1; text-shadow: 0 0 20px #45a29e;">Surprise Bestie! ✨</h1>
+    <p style="font-size: 1.3rem;">You actually survived a 15-round cognitive nightmare! 🧠💨</p>
+    <p>Just wanted to code something entirely unique to remind you that you're an absolute genius and the best friend anyone could ask for. Hope your brain isn't entirely fried.</p>
     <p style="font-size: 2rem; margin-top: 30px; margin-bottom: 30px;">💖🕵️‍♀️🎉</p>
-    <!-- Added Restart Button to final page -->
-    <button class="btn" style="border-color: #00f0ff; color: #00f0ff;" onclick="location.reload()">RESTART PUZZLE</button>
   </div>
 
 <script>
-  // --- PUZZLE DATA DICTIONARIES (MILLIONS OF COMBOS) ---
+  // --- STATE VARS & ANSWERS ---
+  const answers = {};
+  let userRiddleAns = ""; // Stored for round 15
 
-  const riddlesData = [
-    { q: "I am full of holes, but I can hold water. What am I?", a: ["sponge", "a sponge"] },
-    { q: "I have keys but no locks. I have space but no room. You can enter but not go outside. What am I?", a: ["keyboard", "a keyboard"] },
-    { q: "I speak without a mouth and hear without ears. I have no body, but I come alive with wind.", a: ["echo", "an echo"] },
-    { q: "The more of this there is, the less you see. What is it?", a: ["darkness", "the darkness", "fog"] },
-    { q: "What has words, but never speaks?", a: ["book", "a book"] },
-    { q: "What goes up but never comes down?", a: ["age", "your age"] },
-    { q: "What belongs to you, but other people use it more than you?", a: ["name", "your name"] },
-    { q: "What has a head and a tail but no body?", a: ["coin", "a coin"] },
-    { q: "I shave every day, but my beard stays the same. What am I?", a: ["barber", "a barber"] },
-    { q: "What has 13 hearts, but no other organs?", a: ["deck of cards", "cards", "a deck of cards"] }
+  // --- DATA BANKS ---
+  const riddles = [
+    { q: "I have cities, but no houses. I have mountains, but no trees. I have water, but no fish. What am I?", a: ["map", "a map"] },
+    { q: "What disappears the exact moment you say its name?", a: ["silence", "a secret", "secret"] },
+    { q: "The person who makes it, sells it. The person who buys it never uses it. The person who uses it never knows they are using it.", a: ["coffin", "a coffin"] },
+    { q: "I am weightless, but if you put me in a bucket, the bucket becomes lighter.", a: ["hole", "a hole"] }
   ];
-
-  const impostorData = [
-    { b: "💀", i: "👻" }, { b: "🙂", i: "🙃" }, { b: "🍎", i: "🍅" }, 
-    { b: "🐶", i: "🦊" }, { b: "O", i: "0" }, { b: "🌞", i: "🌻" },
-    { b: "🌧️", i: "🌨️" }, { b: "🚗", i: "🚙" }, { b: "🟩", i: "🟢" },
-    { b: "🍫", i: "🧊" }
-  ];
-
-  const wordData = ["BESTIE", "FOREVER", "AWESOME", "FRIEND", "SECRET", "GENIUS", "LEGEND", "MYSTERY", "PUZZLE", "HACKER"];
   
-  const allColors = [
-    { name: "blue", hex: "#007bff" }, { name: "green", hex: "#28a745" },
-    { name: "red", hex: "#dc3545" }, { name: "yellow", hex: "#ffc107" },
-    { name: "orange", hex: "#fd7e14" }, { name: "purple", hex: "#6f42c1" },
-    { name: "pink", hex: "#e83e8c" }, { name: "cyan", hex: "#17a2b8" },
-    { name: "white", hex: "#ffffff" }, { name: "gray", hex: "#6c757d" }
+  const qwerty = "qwertyuiopasdfghjklzxcvbnm";
+  const vocab = ["RESILIENCE", "AESTHETIC", "COGNITIVE", "ALGORITHM", "ENCRYPTION", "PARADIGM", "SYNERGY", "QUANTUM"];
+  
+  const links = [
+    { clues: "Leaves, Trunk, Bark", a: "Tree" },
+    { clues: "Pages, Cover, Spine", a: "Book" },
+    { clues: "Hands, Face, Gears", a: "Clock" },
+    { clues: "Web, Eight, Silk", a: "Spider" },
+    { clues: "Keys, Board, Type", a: "Keyboard" }
   ];
 
-  // --- STATE VARIABLES ---
-  let currentStage = 1;
-  let activeRiddle;
-  let activeImpostor;
-  let activeWord;
-  let correctColorSequence = [];
-  let userColorSequence = [];
-  let targetPatienceTime;
+  const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-  // --- INITIALIZE RANDOM GENERATION ON LOAD ---
+  // --- SETUP FUNCTION ---
   window.onload = () => {
-    // 1. Generate Riddle
-    activeRiddle = riddlesData[Math.floor(Math.random() * riddlesData.length)];
-    document.getElementById('riddle-text').innerText = activeRiddle.q;
+    // T1: Riddle
+    let r = riddles[Math.floor(Math.random() * riddles.length)];
+    document.getElementById('t1-text').innerText = r.q;
+    answers[1] = r.a;
 
-    // 2. Generate Impostor
-    activeImpostor = impostorData[Math.floor(Math.random() * impostorData.length)];
+    // T2: Math Pattern
+    let start = Math.floor(Math.random()*5)+2;
+    let step = Math.floor(Math.random()*4)+3;
+    let seq = [start, start+step, start+(step*2), start+(step*3)];
+    document.getElementById('t2-text').innerText = `${seq[0]}, ${seq[1]}, ${seq[2]}, ${seq[3]}, ?`;
+    answers[2] = (start+(step*4)).toString();
 
-    // 3. Generate Cipher
-    activeWord = wordData[Math.floor(Math.random() * wordData.length)];
-    const cipherType = Math.floor(Math.random() * 3);
-    let encrypted = "";
-    let hint = "";
+    // T3: QWERTY
+    let t3Word = vocab[Math.floor(Math.random() * vocab.length)];
+    let t3Shift = t3Word.toLowerCase().split('').map(c => {
+      let i = qwerty.indexOf(c);
+      if(i === -1) return c;
+      if(c==='p') return 'q'; if(c==='l') return 'a'; if(c==='m') return 'z';
+      return qwerty[i+1];
+    }).join('').toUpperCase();
+    document.getElementById('t3-text').innerText = t3Shift;
+    answers[3] = t3Word;
+
+    // T4: Logic
+    let names = ["Alex", "Sam", "Jordan"];
+    names.sort(() => 0.5 - Math.random());
+    let logicTxt = `${names[0]} is taller than ${names[1]}. ${names[2]} is shorter than ${names[1]}. Who is the tallest?`;
+    document.getElementById('t4-text').innerText = logicTxt;
+    answers[4] = names[0].toLowerCase();
+
+    // T5: Anagram
+    let t5Word = vocab[Math.floor(Math.random() * vocab.length)];
+    let scrambled = t5Word.split('').sort(() => 0.5 - Math.random()).join('');
+    document.getElementById('t5-text').innerText = scrambled;
+    answers[5] = t5Word;
+
+    // T6: Binary
+    let num = Math.floor(Math.random() * 50) + 15;
+    document.getElementById('t6-text').innerText = num.toString(2);
+    answers[6] = num.toString();
+
+    // T7: Link
+    let link = links[Math.floor(Math.random() * links.length)];
+    document.getElementById('t7-text').innerText = link.clues;
+    answers[7] = link.a.toLowerCase();
+
+    // T8: Coordinates
+    let moves = [
+      {dir: "North", x:0, y:Math.floor(Math.random()*4)+1},
+      {dir: "East", x:Math.floor(Math.random()*4)+1, y:0},
+      {dir: "South", x:0, y:-(Math.floor(Math.random()*3)+1)}
+    ];
+    moves.sort(() => 0.5 - Math.random());
+    let finalX = moves[0].x + moves[1].x + moves[2].x;
+    let finalY = moves[0].y + moves[1].y + moves[2].y;
+    document.getElementById('t8-text').innerText = `Go ${moves[0].dir} ${Math.abs(moves[0].x||moves[0].y)}, then ${moves[1].dir} ${Math.abs(moves[1].x||moves[1].y)}, then ${moves[2].dir} ${Math.abs(moves[2].x||moves[2].y)}.`;
+    answers[8] = `${finalX},${finalY}`;
+
+    // T9: Mirror
+    let chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    let str = "";
+    for(let i=0; i<6; i++) str += chars.charAt(Math.floor(Math.random()*chars.length));
+    document.getElementById('t9-text').innerText = str;
+    answers[9] = str.split('').reverse().join('');
+
+    // T10: Clock
+    let h = Math.floor(Math.random()*10)+8; // 8 to 17
+    let m = Math.floor(Math.random()*60);
+    let addM = Math.floor(Math.random()*150)+45; 
+    let t10Str = `If the time is ${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')} and ${addM} minutes pass, what is the new time?`;
+    document.getElementById('t10-text').innerText = t10Str;
     
-    if(cipherType === 0) {
-      // Reverse
-      encrypted = activeWord.split('').reverse().join(' ');
-      hint = "Hint: Read it backwards.";
-    } else if (cipherType === 1) {
-      // Caesar Shift +1
-      encrypted = activeWord.split('').map(c => String.fromCharCode(c.charCodeAt(0) + 1)).join(' ');
-      hint = "Hint: Shift every letter back by 1 in the alphabet (B -> A).";
-    } else {
-      // Scramble
-      let arr = activeWord.split('');
-      for (let i = arr.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-      encrypted = arr.join(' ');
-      hint = "Hint: It is an anagram. Unscramble the letters.";
+    let endM = (m + addM) % 60;
+    let endH = (h + Math.floor((m + addM)/60)) % 24;
+    answers[10] = `${endH.toString().padStart(2,'0')}:${endM.toString().padStart(2,'0')}`;
+
+    // T11: Caesar
+    let t11Word = vocab[Math.floor(Math.random() * vocab.length)];
+    let t11Enc = t11Word.split('').map(c => String.fromCharCode((c.charCodeAt(0) - 65 + 3) % 26 + 65)).join('');
+    document.getElementById('t11-text').innerText = t11Enc;
+    answers[11] = t11Word;
+
+    // T12: Observe
+    let t12Str = "";
+    let targets = ['X', 'Y', 'Z', '7'];
+    let t = targets[Math.floor(Math.random()*targets.length)];
+    let count = 0;
+    for(let i=0; i<45; i++) {
+      let char = chars.charAt(Math.floor(Math.random()*chars.length));
+      if(char === t) count++;
+      t12Str += char;
     }
-    document.getElementById('cipher-text').innerText = encrypted;
-    document.getElementById('cipher-hint').innerText = hint;
+    // Guarantee at least some
+    if(count === 0) { t12Str = t+t12Str; count = 1; }
+    document.getElementById('t12-q').innerText = `Count the exact number of times the character '${t}' appears below:`;
+    document.getElementById('t12-text').innerText = t12Str;
+    answers[12] = count.toString();
 
-    // 4. Generate Color Puzzle
-    let shuffledColors = [...allColors].sort(() => 0.5 - Math.random()).slice(0, 4); // Pick 4 random colors
-    correctColorSequence = [...shuffledColors].sort((a, b) => a.name.localeCompare(b.name)).map(c => c.name); // Sort alphabetically to get the answer
-    
-    const container = document.getElementById('color-btn-container');
-    shuffledColors.forEach(colorObj => {
-      let btn = document.createElement('button');
-      btn.className = 'color-btn';
-      btn.style.backgroundColor = colorObj.hex;
-      btn.onclick = () => checkColor(colorObj.name);
-      container.appendChild(btn);
-    });
+    // T13: Days
+    let dIdx = Math.floor(Math.random()*7);
+    document.getElementById('t13-text').innerText = `If the day before yesterday was ${days[dIdx]}, what day is the day after tomorrow?`;
+    answers[13] = days[(dIdx + 4) % 7].toLowerCase();
 
-    // 5. Generate random patience time (between 3 to 7 seconds)
-    targetPatienceTime = Math.floor(Math.random() * 4000) + 3000; 
+    // T14: Void
+    let t14Word = vocab[Math.floor(Math.random() * vocab.length)];
+    document.getElementById('t14-text').innerText = t14Word;
+    answers[14] = t14Word;
   };
 
   function nextStage(stageNum) {
     document.querySelectorAll('.stage').forEach(el => el.style.display = 'none');
     document.getElementById('stage-' + stageNum).style.display = 'block';
-    currentStage = stageNum;
-
-    if(stageNum === 3) generateImpostors();
-    if(stageNum === 5) userColorSequence = [];
-    if(stageNum === 6) startPatienceTimer();
-    if(stageNum === 8) createConfetti();
     
-    // Automatically focus the input field if the stage has one
-    if(stageNum === 2) setTimeout(() => document.getElementById('riddleAns').focus(), 100);
-    if(stageNum === 4) setTimeout(() => document.getElementById('cipherAns').focus(), 100);
-  }
-
-  function triggerError(elementId) {
-    const el = document.getElementById(elementId);
-    el.classList.remove('shake');
-    void el.offsetWidth;
-    el.classList.add('shake');
-  }
-
-  // --- Stage 1 ---
-  let moveCount = 0;
-  function moveButton() {
-    if (moveCount < 3) {
-      const btn = document.getElementById('runBtn');
-      btn.style.transform = `translate(${Math.random() * 150 - 75}px, ${Math.random() * 150 - 75}px)`;
-      moveCount++;
-    } else {
-      document.getElementById('runBtn').style.transform = 'translate(0, 0)';
-    }
-  }
-
-  // --- Stage 2 ---
-  function checkRiddle() {
-    const ans = document.getElementById('riddleAns').value.toLowerCase().trim();
-    if(activeRiddle.a.includes(ans)) {
-      nextStage(3);
-    } else {
-      triggerError('stage-2');
-      document.getElementById('riddleAns').value = '';
-    }
-  }
-
-  // --- Stage 3 ---
-  function generateImpostors() {
-    const grid = document.getElementById('impostor-grid');
-    grid.innerHTML = '';
-    const total = 24;
-    const impostorIndex = Math.floor(Math.random() * total); // 1 of 24 spots
+    if(stageNum === 18) createConfetti();
     
-    for(let i = 0; i < total; i++) {
-      let span = document.createElement('span');
-      if(i === impostorIndex) {
-        span.innerText = activeImpostor.i;
-        span.onclick = () => nextStage(4);
-      } else {
-        span.innerText = activeImpostor.b;
-        span.onclick = () => triggerError('stage-3');
+    // Auto-focus input
+    let input = document.getElementById('t' + (stageNum-1) + 'Ans');
+    if(input) setTimeout(() => input.focus(), 100);
+  }
+
+  function triggerError(stageNum) {
+    let input = document.getElementById('t' + stageNum + 'Ans');
+    input.classList.remove('shake');
+    void input.offsetWidth;
+    input.classList.add('shake');
+    input.value = ''; 
+  }
+
+  function check(stageNum) {
+    let input = document.getElementById('t' + stageNum + 'Ans');
+    let val = input.value.toLowerCase().trim();
+    let correct = false;
+
+    if(stageNum === 1) {
+      if(answers[1].includes(val)) {
+        userRiddleAns = val;
+        correct = true;
       }
-      grid.appendChild(span);
-    }
-  }
-
-  // --- Stage 4 ---
-  function checkCipher() {
-    const ans = document.getElementById('cipherAns').value.toUpperCase().trim();
-    if(ans === activeWord) {
-      nextStage(5);
+    } else if (stageNum === 15) {
+      if(val === userRiddleAns) correct = true;
     } else {
-      triggerError('stage-4');
-      document.getElementById('cipherAns').value = '';
+      let target = (typeof answers[stageNum] === 'string') ? answers[stageNum].toLowerCase() : answers[stageNum];
+      if(val === target) correct = true;
     }
+
+    if(correct) nextStage(stageNum + 1);
+    else triggerError(stageNum);
   }
 
-  // --- Stage 5 ---
-  function checkColor(colorName) {
-    userColorSequence.push(colorName);
-    const index = userColorSequence.length - 1;
-    
-    if(userColorSequence[index] !== correctColorSequence[index]) {
-      document.getElementById('color-feedback').innerText = "Wrong order! Sequence reset.";
-      userColorSequence = [];
-      triggerError('stage-5');
-    } else {
-      document.getElementById('color-feedback').innerText = "Correct... keep going.";
-      if(userColorSequence.length === correctColorSequence.length) {
-        nextStage(6);
-      }
-    }
-  }
-
-  // --- Stage 6 ---
-  let patienceTimer = 0;
-  let patienceInterval;
-  function startPatienceTimer() {
-    patienceTimer = 0;
-    document.getElementById('progress-bar').style.width = '0%';
-    document.getElementById('patience-warning').style.opacity = '0';
-    
-    clearInterval(patienceInterval);
-    patienceInterval = setInterval(() => {
-      if(currentStage !== 6) { clearInterval(patienceInterval); return; }
-      patienceTimer += 50;
-      let percent = (patienceTimer / targetPatienceTime) * 100;
-      document.getElementById('progress-bar').style.width = percent + '%';
-      
-      if(patienceTimer >= targetPatienceTime) {
-        clearInterval(patienceInterval);
-        nextStage(7);
-      }
-    }, 50);
-  }
-
-  function resetPatience() {
-    if(currentStage === 6 && patienceTimer > 0 && patienceTimer < targetPatienceTime) {
-      patienceTimer = 0;
-      document.getElementById('progress-bar').style.width = '0%';
-      const warning = document.getElementById('patience-warning');
-      warning.style.opacity = '1';
-      setTimeout(() => warning.style.opacity = '0', 1000);
-    }
-  }
-
-  // --- Stage 8 ---
   function createConfetti() {
-    const colors = ['#00f0ff', '#ff007f', '#ffffff', '#ffd700'];
-    for(let i = 0; i < 100; i++) {
+    const colors = ['#66fcf1', '#45a29e', '#ffffff'];
+    for(let i = 0; i < 120; i++) {
       let conf = document.createElement('div');
       conf.classList.add('confetti');
       conf.style.left = Math.random() * 100 + 'vw';
