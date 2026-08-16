@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>A Mystery Awaits...</title>
+<style>
+  /* Base Styles */
+  body {
+    margin: 0; padding: 0;
+    background-color: #0f0c29;
+    background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
+    color: #e0e0e0;
+    font-family: 'Courier New', Courier, monospace;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    min-height: 100vh; overflow: hidden;
+    text-align: center;
+    user-select: none;
+  }
+  
+  .stage {
+    display: none;
+    padding: 20px;
+    max-width: 600px;
+    width: 90%;
+    animation: fadeIn 0.8s ease-in-out;
+  }
+  
+  h1 { color: #ff007f; text-shadow: 0 0 10px #ff007f; margin-bottom: 15px; }
+  p { font-size: 1.1rem; line-height: 1.5; margin-bottom: 20px; }
+  .hint { font-size: 0.9rem; color: #a9a9a9; font-style: italic; }
+
+  /* Interactive Elements */
+  .btn {
+    background-color: transparent;
+    border: 2px solid #00f0ff; color: #00f0ff;
+    padding: 12px 25px; font-size: 1.1rem;
+    font-family: inherit; font-weight: bold;
+    cursor: pointer; border-radius: 8px;
+    transition: all 0.3s ease;
+    margin: 10px;
+    text-transform: uppercase;
+  }
+  .btn:hover, .btn:active {
+    background-color: #00f0ff; color: #0f0c29;
+    box-shadow: 0 0 15px #00f0ff;
+  }
+
+  input[type="text"] {
+    padding: 10px; font-size: 1.1rem;
+    border: 2px solid #00f0ff; border-radius: 5px;
+    background: transparent; color: #fff;
+    text-align: center; margin-bottom: 15px;
+    width: 80%; max-width: 250px;
+    outline: none; font-family: inherit;
+    text-transform: uppercase;
+  }
+
+  /* Specific Stage Styles */
+  #runBtn { position: relative; transition: transform 0.2s; }
+  
+  .grid {
+    display: flex; flex-wrap: wrap; justify-content: center;
+    gap: 10px; font-size: 2rem; max-width: 300px; margin: 0 auto;
+  }
+  .grid span { cursor: pointer; padding: 5px; transition: transform 0.2s; }
+  .grid span:hover { transform: scale(1.3); }
+
+  .color-btn {
+    width: 60px; height: 60px; border-radius: 50%;
+    border: none; cursor: pointer; margin: 10px;
+    box-shadow: 0 0 10px rgba(255,255,255,0.2);
+    transition: transform 0.1s;
+  }
+  .color-btn:active { transform: scale(0.9); }
+
+  .tiny-link {
+    font-size: 0.6rem; color: #555;
+    cursor: pointer; margin-top: 50px;
+    display: inline-block;
+  }
+
+  /* Confetti */
+  .confetti {
+    position: absolute; width: 10px; height: 10px;
+    border-radius: 2px; animation: fall linear infinite; z-index: 100;
+  }
+
+  @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+  @keyframes fall {
+    0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+  
+  .shake { animation: shake 0.4s; }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25%, 75% { transform: translateX(-10px); }
+    50% { transform: translateX(10px); }
+  }
+</style>
+</head>
+<body onclick="resetPatience()">
+
+  <div id="stage-1" class="stage" style="display: block;">
+    <h1>Protocol Initiated</h1>
+    <p>Every time you load this page, the universe generates a completely new set of puzzles. Over 8 billion combinations exist.</p>
+    <p>Are you ready for your unique trial?</p>
+    <button class="btn" id="runBtn" onmouseover="moveButton()" ontouchstart="moveButton()" onclick="nextStage(2)">Start</button>
+  </div>
+
+  <div id="stage-2" class="stage">
+    <h1>Trial I: The Mind</h1>
+    <p id="riddle-text"></p>
+    <!-- Added onkeydown for Enter key support -->
+    <input type="text" id="riddleAns" placeholder="Your answer..." onkeydown="if(event.key === 'Enter') checkRiddle()">
+    <br>
+    <button class="btn" onclick="checkRiddle()">Submit</button>
+  </div>
+
+  <div id="stage-3" class="stage">
+    <h1>Trial II: The Eye</h1>
+    <p>Things are not always as they seem. Find the impostor.</p>
+    <div class="grid" id="impostor-grid"></div>
+  </div>
+
+  <div id="stage-4" class="stage">
+    <h1>Trial III: The Code</h1>
+    <p>Decrypt the following transmission:</p>
+    <h2 id="cipher-text" style="letter-spacing: 5px; color: #00f0ff;"></h2>
+    <p class="hint" id="cipher-hint"></p>
+    <!-- Added onkeydown for Enter key support -->
+    <input type="text" id="cipherAns" placeholder="Decoded word..." onkeydown="if(event.key === 'Enter') checkCipher()">
+    <br>
+    <button class="btn" onclick="checkCipher()">Verify</button>
+  </div>
+
+  <div id="stage-5" class="stage">
+    <h1>Trial IV: The Order</h1>
+    <p>Logic is key. Press the colors in <b>alphabetical order</b>.</p>
+    <div id="color-btn-container"></div>
+    <p id="color-feedback" style="font-size: 0.9rem; color: #ff007f; min-height: 20px;"></p>
+  </div>
+
+  <div id="stage-6" class="stage">
+    <h1>Trial V: Patience</h1>
+    <p>Do absolutely nothing. Do not touch the screen. Just wait.</p>
+    <div style="width: 100%; height: 20px; background: #333; border-radius: 10px; margin-top: 30px;">
+      <div id="progress-bar" style="width: 0%; height: 100%; background: #00f0ff; border-radius: 10px; transition: width 0.1s linear;"></div>
+    </div>
+    <p id="patience-warning" style="color: #ff007f; margin-top: 15px; opacity: 0;">Timer reset! I said do nothing!</p>
+  </div>
+
+  <div id="stage-7" class="stage">
+    <h1>Trial VI: The Choice</h1>
+    <p>You have reached the end. Click the button below to generate a brand new, never-before-seen puzzle sequence.</p>
+    <button class="btn" style="border-color: #ff007f; color: #ff007f;" onclick="location.reload()">RESTART EVERYTHING</button>
+    <br><br>
+    <span class="tiny-link" onclick="nextStage(8)">or click here to finish</span>
+  </div>
+
+  <div id="stage-8" class="stage">
+    <h1 style="font-size: 3rem; color: #00f0ff;">Surprise Bestie! ✨</h1>
+    <p style="font-size: 1.3rem;">You survived a literally one-in-a-billion puzzle combination! 🧠💨</p>
+    <p>Just wanted to make something unique to remind you that you're the absolute best. Thanks for always dealing with my crazy ideas and being an amazing friend.</p>
+    <p style="font-size: 2rem; margin-top: 30px; margin-bottom: 30px;">💖🕵️‍♀️🎉</p>
+    <!-- Added Restart Button to final page -->
+    <button class="btn" style="border-color: #00f0ff; color: #00f0ff;" onclick="location.reload()">RESTART PUZZLE</button>
+  </div>
+
+<script>
+  // --- PUZZLE DATA DICTIONARIES (MILLIONS OF COMBOS) ---
+
+  const riddlesData = [
+    { q: "I am full of holes, but I can hold water. What am I?", a: ["sponge", "a sponge"] },
+    { q: "I have keys but no locks. I have space but no room. You can enter but not go outside. What am I?", a: ["keyboard", "a keyboard"] },
+    { q: "I speak without a mouth and hear without ears. I have no body, but I come alive with wind.", a: ["echo", "an echo"] },
+    { q: "The more of this there is, the less you see. What is it?", a: ["darkness", "the darkness", "fog"] },
+    { q: "What has words, but never speaks?", a: ["book", "a book"] },
+    { q: "What goes up but never comes down?", a: ["age", "your age"] },
+    { q: "What belongs to you, but other people use it more than you?", a: ["name", "your name"] },
+    { q: "What has a head and a tail but no body?", a: ["coin", "a coin"] },
+    { q: "I shave every day, but my beard stays the same. What am I?", a: ["barber", "a barber"] },
+    { q: "What has 13 hearts, but no other organs?", a: ["deck of cards", "cards", "a deck of cards"] }
+  ];
+
+  const impostorData = [
+    { b: "💀", i: "👻" }, { b: "🙂", i: "🙃" }, { b: "🍎", i: "🍅" }, 
+    { b: "🐶", i: "🦊" }, { b: "O", i: "0" }, { b: "🌞", i: "🌻" },
+    { b: "🌧️", i: "🌨️" }, { b: "🚗", i: "🚙" }, { b: "🟩", i: "🟢" },
+    { b: "🍫", i: "🧊" }
+  ];
+
+  const wordData = ["BESTIE", "FOREVER", "AWESOME", "FRIEND", "SECRET", "GENIUS", "LEGEND", "MYSTERY", "PUZZLE", "HACKER"];
+  
+  const allColors = [
+    { name: "blue", hex: "#007bff" }, { name: "green", hex: "#28a745" },
+    { name: "red", hex: "#dc3545" }, { name: "yellow", hex: "#ffc107" },
+    { name: "orange", hex: "#fd7e14" }, { name: "purple", hex: "#6f42c1" },
+    { name: "pink", hex: "#e83e8c" }, { name: "cyan", hex: "#17a2b8" },
+    { name: "white", hex: "#ffffff" }, { name: "gray", hex: "#6c757d" }
+  ];
+
+  // --- STATE VARIABLES ---
+  let currentStage = 1;
+  let activeRiddle;
+  let activeImpostor;
+  let activeWord;
+  let correctColorSequence = [];
+  let userColorSequence = [];
+  let targetPatienceTime;
+
+  // --- INITIALIZE RANDOM GENERATION ON LOAD ---
+  window.onload = () => {
+    // 1. Generate Riddle
+    activeRiddle = riddlesData[Math.floor(Math.random() * riddlesData.length)];
+    document.getElementById('riddle-text').innerText = activeRiddle.q;
+
+    // 2. Generate Impostor
+    activeImpostor = impostorData[Math.floor(Math.random() * impostorData.length)];
+
+    // 3. Generate Cipher
+    activeWord = wordData[Math.floor(Math.random() * wordData.length)];
+    const cipherType = Math.floor(Math.random() * 3);
+    let encrypted = "";
+    let hint = "";
+    
+    if(cipherType === 0) {
+      // Reverse
+      encrypted = activeWord.split('').reverse().join(' ');
+      hint = "Hint: Read it backwards.";
+    } else if (cipherType === 1) {
+      // Caesar Shift +1
+      encrypted = activeWord.split('').map(c => String.fromCharCode(c.charCodeAt(0) + 1)).join(' ');
+      hint = "Hint: Shift every letter back by 1 in the alphabet (B -> A).";
+    } else {
+      // Scramble
+      let arr = activeWord.split('');
+      for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      encrypted = arr.join(' ');
+      hint = "Hint: It is an anagram. Unscramble the letters.";
+    }
+    document.getElementById('cipher-text').innerText = encrypted;
+    document.getElementById('cipher-hint').innerText = hint;
+
+    // 4. Generate Color Puzzle
+    let shuffledColors = [...allColors].sort(() => 0.5 - Math.random()).slice(0, 4); // Pick 4 random colors
+    correctColorSequence = [...shuffledColors].sort((a, b) => a.name.localeCompare(b.name)).map(c => c.name); // Sort alphabetically to get the answer
+    
+    const container = document.getElementById('color-btn-container');
+    shuffledColors.forEach(colorObj => {
+      let btn = document.createElement('button');
+      btn.className = 'color-btn';
+      btn.style.backgroundColor = colorObj.hex;
+      btn.onclick = () => checkColor(colorObj.name);
+      container.appendChild(btn);
+    });
+
+    // 5. Generate random patience time (between 3 to 7 seconds)
+    targetPatienceTime = Math.floor(Math.random() * 4000) + 3000; 
+  };
+
+  function nextStage(stageNum) {
+    document.querySelectorAll('.stage').forEach(el => el.style.display = 'none');
+    document.getElementById('stage-' + stageNum).style.display = 'block';
+    currentStage = stageNum;
+
+    if(stageNum === 3) generateImpostors();
+    if(stageNum === 5) userColorSequence = [];
+    if(stageNum === 6) startPatienceTimer();
+    if(stageNum === 8) createConfetti();
+    
+    // Automatically focus the input field if the stage has one
+    if(stageNum === 2) setTimeout(() => document.getElementById('riddleAns').focus(), 100);
+    if(stageNum === 4) setTimeout(() => document.getElementById('cipherAns').focus(), 100);
+  }
+
+  function triggerError(elementId) {
+    const el = document.getElementById(elementId);
+    el.classList.remove('shake');
+    void el.offsetWidth;
+    el.classList.add('shake');
+  }
+
+  // --- Stage 1 ---
+  let moveCount = 0;
+  function moveButton() {
+    if (moveCount < 3) {
+      const btn = document.getElementById('runBtn');
+      btn.style.transform = `translate(${Math.random() * 150 - 75}px, ${Math.random() * 150 - 75}px)`;
+      moveCount++;
+    } else {
+      document.getElementById('runBtn').style.transform = 'translate(0, 0)';
+    }
+  }
+
+  // --- Stage 2 ---
+  function checkRiddle() {
+    const ans = document.getElementById('riddleAns').value.toLowerCase().trim();
+    if(activeRiddle.a.includes(ans)) {
+      nextStage(3);
+    } else {
+      triggerError('stage-2');
+      document.getElementById('riddleAns').value = '';
+    }
+  }
+
+  // --- Stage 3 ---
+  function generateImpostors() {
+    const grid = document.getElementById('impostor-grid');
+    grid.innerHTML = '';
+    const total = 24;
+    const impostorIndex = Math.floor(Math.random() * total); // 1 of 24 spots
+    
+    for(let i = 0; i < total; i++) {
+      let span = document.createElement('span');
+      if(i === impostorIndex) {
+        span.innerText = activeImpostor.i;
+        span.onclick = () => nextStage(4);
+      } else {
+        span.innerText = activeImpostor.b;
+        span.onclick = () => triggerError('stage-3');
+      }
+      grid.appendChild(span);
+    }
+  }
+
+  // --- Stage 4 ---
+  function checkCipher() {
+    const ans = document.getElementById('cipherAns').value.toUpperCase().trim();
+    if(ans === activeWord) {
+      nextStage(5);
+    } else {
+      triggerError('stage-4');
+      document.getElementById('cipherAns').value = '';
+    }
+  }
+
+  // --- Stage 5 ---
+  function checkColor(colorName) {
+    userColorSequence.push(colorName);
+    const index = userColorSequence.length - 1;
+    
+    if(userColorSequence[index] !== correctColorSequence[index]) {
+      document.getElementById('color-feedback').innerText = "Wrong order! Sequence reset.";
+      userColorSequence = [];
+      triggerError('stage-5');
+    } else {
+      document.getElementById('color-feedback').innerText = "Correct... keep going.";
+      if(userColorSequence.length === correctColorSequence.length) {
+        nextStage(6);
+      }
+    }
+  }
+
+  // --- Stage 6 ---
+  let patienceTimer = 0;
+  let patienceInterval;
+  function startPatienceTimer() {
+    patienceTimer = 0;
+    document.getElementById('progress-bar').style.width = '0%';
+    document.getElementById('patience-warning').style.opacity = '0';
+    
+    clearInterval(patienceInterval);
+    patienceInterval = setInterval(() => {
+      if(currentStage !== 6) { clearInterval(patienceInterval); return; }
+      patienceTimer += 50;
+      let percent = (patienceTimer / targetPatienceTime) * 100;
+      document.getElementById('progress-bar').style.width = percent + '%';
+      
+      if(patienceTimer >= targetPatienceTime) {
+        clearInterval(patienceInterval);
+        nextStage(7);
+      }
+    }, 50);
+  }
+
+  function resetPatience() {
+    if(currentStage === 6 && patienceTimer > 0 && patienceTimer < targetPatienceTime) {
+      patienceTimer = 0;
+      document.getElementById('progress-bar').style.width = '0%';
+      const warning = document.getElementById('patience-warning');
+      warning.style.opacity = '1';
+      setTimeout(() => warning.style.opacity = '0', 1000);
+    }
+  }
+
+  // --- Stage 8 ---
+  function createConfetti() {
+    const colors = ['#00f0ff', '#ff007f', '#ffffff', '#ffd700'];
+    for(let i = 0; i < 100; i++) {
+      let conf = document.createElement('div');
+      conf.classList.add('confetti');
+      conf.style.left = Math.random() * 100 + 'vw';
+      conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      conf.style.animationDuration = (Math.random() * 3 + 2) + 's';
+      conf.style.animationDelay = (Math.random() * 2) + 's';
+      document.body.appendChild(conf);
+    }
+  }
+</script>
+</body>
+</html>
